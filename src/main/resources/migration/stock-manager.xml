@@ -1,0 +1,135 @@
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog-ext
+   http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd
+   http://www.liquibase.org/xml/ns/dbchangelog
+   http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.4.xsd">
+
+    <property name="uuid_function" value="uuid_generate_v4()" dbms="postgresql"/>
+    <property name="uuid_type" value="uuid" dbms="postgresql"/>
+    <!--    Users   -->
+    <changeSet id="1" author="serhat">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="users"/>
+            </not>
+        </preConditions>
+        <sql>
+            CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
+        </sql>
+        <createTable tableName="users">
+            <column name="id" type="${uuid_type}" defaultValueComputed="${uuid_function}">
+                <constraints nullable="false" unique="true" primaryKey="true"/>
+            </column>
+            <column name="username" type="text">
+                <constraints nullable="false" unique="true"/>
+            </column>
+            <column name="name" type="text">
+                <constraints nullable="false"/>
+            </column>
+            <column name="role" type="integer">
+                <constraints nullable="false"/>
+            </column>
+            <column name="image" type="text">
+                <constraints nullable="true"/>
+            </column>
+        </createTable>
+        <rollback>
+            <dropTable tableName="users"/>
+        </rollback>
+    </changeSet>
+    <!--    Products    -->
+    <changeSet id="2" author="serhat">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="products"/>
+            </not>
+        </preConditions>
+        <createTable tableName="products">
+            <column name="id" type="${uuid_type}" defaultValueComputed="${uuid_function}">
+                <constraints nullable="false" unique="true" primaryKey="true"/>
+            </column>
+            <column name="name" type="TEXT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="price" type="DECIMAL(10)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="details" type="JSON">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+        <rollback>
+            <dropTable tableName="products"/>
+        </rollback>
+    </changeSet>
+    <!--    Sales   -->
+    <changeSet id="3" author="serhat">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="sales"/>
+            </not>
+        </preConditions>
+        <createTable tableName="sales">
+            <column name="id" type="${uuid_type}" defaultValueComputed="${uuid_function}">
+                <constraints nullable="false" unique="true" primaryKey="true"/>
+            </column>
+            <column name="details" type="jsonb">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+        <rollback>
+            <dropTable tableName="sales"/>
+        </rollback>
+    </changeSet>
+    <!--    Markets -->
+    <changeSet id="4" author="serhat">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="markets"/>
+            </not>
+        </preConditions>
+        <createTable tableName="markets">
+            <column name="id" type="${uuid_type}" defaultValueComputed="${uuid_function}">
+                <constraints nullable="false" primaryKey="true" unique="true"/>
+            </column>
+            <column name="current_workers" type="VARCHAR(50) []"/>
+            <column name="is_online" type="boolean" defaultValue="false">
+                <constraints nullable="false"/>
+            </column>
+            <column name="details" type="jsonb">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+        <rollback>
+            <dropTable tableName="markets"/>
+        </rollback>
+    </changeSet>
+    <!--    Stock Items    -->
+    <changeSet id="5" author="serhat">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="stock_items"/>
+            </not>
+        </preConditions>
+        <createTable tableName="stock_items">
+            <column name="id" type="${uuid_type}" defaultValueComputed="${uuid_function}">
+                <constraints nullable="false" primaryKey="true" unique="true"/>
+            </column>
+            <column name="market_id" type="${uuid_type}">
+                <constraints nullable="false"/>
+            </column>
+            <column name="name" type="TEXT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="details" type="jsonb">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+        <rollback>
+            <dropTable tableName="stock_items"/>
+        </rollback>
+    </changeSet>
+</databaseChangeLog>
